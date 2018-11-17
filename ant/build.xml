@@ -3,10 +3,28 @@
 	ant/build.xml for AkmeCore
 -->
 <project name="AkmeCore" basedir=".." default="jar">
-	
+
 <!-- Load common properties -->
 <property environment="env"/>
 <property file="ant/common.properties"/>
+
+<target name="install" description="download+install binary">
+	<property name="install.file" value="AkmeCoreBin-0.1.0"/>
+	<get src="https://github.com/kmashint/AkmeCoreBin/archive/0.1.0.zip" 
+		dest="${install.file}.zip" 
+		skipexisting="true"/>
+	<delete dir="${install.file}.zip/" failonerror="false"/>
+    <unzip src="${install.file}.zip" dest="." overwrite="true">
+    	<patternset>
+    	    <include name="*/lib/**"/>
+    	    <include name="*/war/**"/>
+    	</patternset>
+	</unzip>
+	<copy todir=".">
+		<fileset dir="${install.file}/"/>
+	</copy>
+	<delete dir="${install.file}/" failonerror="true"/>
+</target>
 
 <target name="proj.init" description="Initialize">
 	<echo message="Processing ${ant.project.name} from ${basedir} with Java ${ant.java.version} ..."/>
