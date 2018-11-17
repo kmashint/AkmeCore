@@ -14,15 +14,14 @@
 		dest="${install.file}.zip" 
 		skipexisting="true"/>
 	<delete dir="${install.file}.zip/" failonerror="false"/>
-    <unzip src="${install.file}.zip" dest="." overwrite="true">
-    	<patternset includes="*/lib/**, */war/lib/**"/>
+    <unzip src="${install.file}.zip" dest="." overwrite="false">
+    	<patternset includes="*/lib/**, */war/WEB-INF/lib/**"/>
 	</unzip>
 	<delete dir="lib/" failonerror="true"/>
 	<delete dir="war/WEB-INF/lib/" failonerror="true"/>
-	<copy todir=".">
+	<move todir="." failonerror="true">
 		<fileset dir="${install.file}/"/>
-	</copy>
-	<delete dir="${install.file}/" failonerror="true"/>
+	</move>
 </target>
 
 <target name="proj.init" description="Initialize">
