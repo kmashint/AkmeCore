@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 	ant/build.xml for AkmeCore
+    Use macrodef, or scriptdef, instead of antcall since the latter may break the dependency chain.
+    https://stackoverflow.com/questions/15877714/ant-target-calling
+    https://stackoverflow.com/questions/25448523/call-ant-target-multiple-times-with-different-parameters
 -->
 <project name="AkmeCore" basedir=".." default="jar">
 
 <!-- Load common properties -->
 <property environment="env"/>
 <property file="ant/common.properties"/>
+<property name="install.name" value="AkmeCoreBin"/>
+<property name="install.version" value="0.1.1"/>
+<property name="install.file" value="${install.name}-${install.version}"/>
+<property name="install.url" value="https://github.com/kmashint/${install.name}/archive/${install.version}.zip"/>
 
 <target name="install" description="download+install binary">
-	<property name="install.file" value="AkmeCoreBin-0.1.0"/>
-	<get src="https://github.com/kmashint/AkmeCoreBin/archive/0.1.0.zip" 
+	<get src="${install.url}"
 		dest="${install.file}.zip" 
 		skipexisting="true"/>
 	<delete dir="${install.file}.zip/" failonerror="false"/>
