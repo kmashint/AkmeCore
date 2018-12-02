@@ -5,26 +5,26 @@ import java.io.*;
 
 /**
  * Remove the last non-blank line from a file given a maximum line length to check,
- * writing the last line and any surrounding blank line on each side to a separate file. 
+ * writing the last line and any surrounding blank line on each side to a separate file.
  * e.g. If the file ends with "\r\n\r\n123 rows\r\n\r\n" then the separate file will contain "\r\n123 rows\r\n\r\n".
- * 
- * <pre><code>java frameworks.core.io.RemoveLastLine "input.txt" 8192 "input-tail.txt"</code><pre>
- * 
+ *
+ * <pre><code>java akme.core.io.RemoveLastLine "input.txt" 8192 "input-tail.txt"</code><pre>
+ *
  * javac RemoveLastLine.java
- * 
+ *
  */
 public class RemoveLastLine {
-	
+
 	public static void main(final String[] args) {
 		try { go(args[0], Integer.valueOf(args[1]).intValue(), args.length > 2 ? args[2] : null); }
 		catch (IOException ex) { ex.printStackTrace(); }
 	}
-	
+
 	public static final void closeQuiet(final Closeable stream) {
 		try { if (stream != null) stream.close(); }
 		catch (IOException ex) { ex.printStackTrace(); }
 	}
-	
+
 	public static void go(final String inputName, final int maxLength, final String outputName) throws IOException {
 		RandomAccessFile raf = null;
 		BufferedOutputStream ous = null;
@@ -60,7 +60,7 @@ public class RemoveLastLine {
 				}
 			}
 		}
-		finally { 
+		finally {
 			closeQuiet(raf);
 			closeQuiet(ous);
 		}
