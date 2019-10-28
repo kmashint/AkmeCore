@@ -19,13 +19,6 @@ public class ThreadSafeFormat extends Format {
 
 	private static final long serialVersionUID = 2L;
 
-	/**
-	 * Clear all pooled instances to cleanup lingering references with multiple ClassLoaders.
-	 * This should be called for example from a web-app ServletContextListener contextDestroyed().
-	 */
-	public static void clear() {
-	}
-
 	private final Format unsafeFormat;
 
 	/**
@@ -38,14 +31,8 @@ public class ThreadSafeFormat extends Format {
 	/**
 	 * Return a Format from the internal pool or clone a new Format.
 	 */
-	private Format getFormatMayClone() {
+	private Format getFormatClone() {
 		return (unsafeFormat != null) ? (Format) unsafeFormat.clone() : null;
-	}
-	
-	/**
-	 * Return to the pool.
-	 */
-	private void putFormat(Format fmt) {
 	}
 
 	/**
@@ -53,13 +40,8 @@ public class ThreadSafeFormat extends Format {
 	 * @see java.text.Format#parseObject(java.lang.String, java.text.ParsePosition)
 	 */
 	public Object parseObject(String source, ParsePosition pos) {
-		final Format fmt = getFormatMayClone();
-		try {
-			return fmt.parseObject(source,pos);
-		}
-		finally {
-			putFormat(fmt);
-		}
+		final Format fmt = getFormatClone();
+		return fmt.parseObject(source,pos);
 	}
 
 	/**
@@ -67,20 +49,8 @@ public class ThreadSafeFormat extends Format {
 	 * @see java.text.Format#format(java.lang.Object, java.lang.StringBuffer, java.text.FieldPosition)
 	 */
 	public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-		final Format fmt = getFormatMayClone();
-		try {
-			return fmt.format(obj,toAppendTo,pos);
-		}
-		finally {
-			putFormat(fmt);
-		}
-	}
-
-	/**
-	 * Return a clone() of the internal thread-unsafe format.
-	 */
-	public Format getInternalFormat() {
-		return (unsafeFormat != null) ? (Format) unsafeFormat.clone() : null;
+		final Format fmt = getFormatClone();
+		return fmt.format(obj,toAppendTo,pos);
 	}
 
 }
