@@ -44,20 +44,22 @@ public class RemoveLastLine {
 				newlineLength = 0;
 			}
 			int lines = 0;
+			byte p = '\n';
 			if (newlineLength != 0) for (int i = buf.length - 1 - newlineLength; i >= 0; i--) {
-				if (buf[i] != '\n') continue;
-				if (newlineLength == 1 || (i>0 && buf[i-1] == '\r')) {
-					if (lines <= 1) {
-						if (i>=1 && buf[i-1] == '\n') i -= 1;
-						if (i>=2 && buf[i-1] == '\r' && buf[i-2] == '\n') i -= 2;
-						lines++;
-						if (lines <= 1) continue;
-					}
-					i++;
+				byte c = buf[i];
+				if (c != '\n') {
+					if (p == '\n') lines++;
+				}
+				else {
+					if (i>0 && buf[i-1] == '\r') i--;
+				}
+				if (lines > 1 || i == 0) {
+					if (lines > 1) i += newlineLength+1;
 					raf.setLength(fileLength - ((long)buf.length - i));
 					if (ous != null) ous.write(buf, i, buf.length - i);
 					break;
 				}
+				p = c;
 			}
 		}
 		finally {
