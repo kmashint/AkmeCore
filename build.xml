@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
-	ant/build.xml for AkmeCore
+	build.xml for AkmeCore
     Use macrodef, or scriptdef, instead of antcall since the latter may break the dependency chain.
     https://stackoverflow.com/questions/15877714/ant-target-calling
     https://stackoverflow.com/questions/25448523/call-ant-target-multiple-times-with-different-parameters
 -->
-<project name="AkmeCore" basedir=".." default="jar">
+<project name="AkmeCore" basedir="." default="jar">
 
 <!-- Load common properties -->
 <property environment="env"/>
-<property file="ant/common.properties"/>
+<property file="build/common.properties"/>
 <property name="install.name" value="AkmeCoreBin"/>
 <property name="install.version" value="0.1.1"/>
 <property name="install.file" value="${install.name}-${install.version}"/>
@@ -35,13 +35,13 @@
 	<tstamp/>
 	
 	<!-- Load local properties -->
-	<property file="ant/local.properties"/>
+	<property file="build/local.properties"/>
 
 	<!-- Set project-specific properties -->
 	<property name="findbugs.home" value="C:/Java/findbugs-1.3.9"/>
-	<property name="findbugs.project" value="ant/FindBugs.fbp"/>
-	<property name="findbugs.xml" value="ant/FindBugs.xml"/>
-	<property name="findbugs.html" value="ant/FindBugs.html"/>
+	<property name="findbugs.project" value="build/FindBugs.fbp"/>
+	<property name="findbugs.xml" value="build/FindBugs.xml"/>
+	<property name="findbugs.html" value="build/FindBugs.html"/>
 </target>
 
 <target name="proj.clean" depends="proj.init" description="Clean the generated .class files (clean compile)">
@@ -101,7 +101,7 @@
 </target>
 
 <target name="just.bugs.style" depends="proj.init" description="Just transform the xml bugs to html">
-	<xslt style="ant/FindBugs-fancy.xsl"
+	<xslt style="build/FindBugs-fancy.xsl"
 		in="${findbugs.xml}"
 		out="${findbugs.html}"
 		>
