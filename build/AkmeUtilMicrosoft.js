@@ -70,8 +70,9 @@ var AkmeMS = {
  wmiTimeout : -2147209215,
 
  fso : new ActiveXObject("Scripting.FileSystemObject"),
- hta : ( (document.documentMode == 8 && navigator.userAgent.indexOf("MSIE 7.") != -1) ||
-	(document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? 
+ hta : typeof document === 'object' && (
+        (document.documentMode == 8 && navigator.userAgent.indexOf("MSIE 7.") != -1) ||
+        (document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? 
 	HTA : null,
  sha : new ActiveXObject("Shell.Application"),
  wsh : new ActiveXObject("WScript.Shell"),
@@ -274,7 +275,7 @@ function AkmeErr(ex) {
  this.suffix = "";
  this.set = function (ex) {
   this.number = (ex) ? ex.number : 0;
-  this.description = (ex) ? new String(ex.description).replace(/[\r\n]/g," ") : "";
+  this.description = (ex) ? String(ex.description).replace(/[\r\n]/g," ") : "";
  };
  this.set(ex);
  this.format = function (prefix,suffix) {
@@ -287,10 +288,10 @@ function AkmeErr(ex) {
 // Abstraction from WSH or MSI scripting containers.  
 // Could extend to HTA or IE hosted scripts.
 var AkmeScriptingHost = {
- hta_ : typeof(window) != "undefined" ? window : null,
- mis_ : typeof(Session) != "undefined" ? Session : null,
- msi_ : typeof(Installer) != "undefined" ? Installer : null,
- wsh_ : typeof(WScript) != "undefined" ? WScript : null,
+ _hta : typeof(window) != "undefined" ? window : null,
+ _mis : typeof(Session) != "undefined" ? Session : null,
+ _msi : typeof(Installer) != "undefined" ? Installer : null,
+ _wsh : typeof(WScript) != "undefined" ? WScript : null,
  
  Init : function() {
   this.Debug("DateTime "+ new Date());
@@ -300,56 +301,56 @@ var AkmeScriptingHost = {
   this.Debug("TEMP "+ this.Environment("TEMP"));
   this.Debug("COMSPEC "+ this.Environment("COMSPEC"));
   this.Debug("ScriptEngine "+ this.ScriptEngine);
-  if (this.msi_ != null) {
-   this.Debug("Installer.Version "+ msi_.Version);
-   this.Debug("Installer.UILevel "+ msi_.UILevel);
+  if (this._msi != null) {
+   this.Debug("Installer.Version "+ _msi.Version);
+   this.Debug("Installer.UILevel "+ _msi.UILevel);
   }
-  if (this.msi_ != null) {
-   this.Debug("Session.Language "+ mis_.Language);
-   this.Debug("Session.SourceDir "+ mis_.Property("SourceDir"));
-   this.Debug("Session.TARGETDIR "+ mis_.Property("TARGETDIR"));
-   this.Debug("Session.INSTALLDIR "+ mis_.Property("INSTALLDIR"));
+  if (this._msi != null) {
+   this.Debug("Session.Language "+ _mis.Language);
+   this.Debug("Session.SourceDir "+ _mis.Property("SourceDir"));
+   this.Debug("Session.TARGETDIR "+ _mis.Property("TARGETDIR"));
+   this.Debug("Session.INSTALLDIR "+ _mis.Property("INSTALLDIR"));
   }
-  if (this.wsh_ != null) {
-   this.Debug("Version "+ this.wsh_.Version);
-   this.Debug("BuildVersion "+ this.wsh_.BuildVersion);
-   this.Debug("ScriptName "+ this.wsh_.ScriptName);
-   this.Debug("ScriptFullName "+ this.wsh_.ScriptFullName);
+  if (this._wsh != null) {
+   this.Debug("Version "+ this._wsh.Version);
+   this.Debug("BuildVersion "+ this._wsh.BuildVersion);
+   this.Debug("ScriptName "+ this._wsh.ScriptName);
+   this.Debug("ScriptFullName "+ this._wsh.ScriptFullName);
   }
  },
  
- IsHta : this.hta_ != null,
- IsMis : this.mis_ != null,
- IsMsi : this.msi_ != null,
- IsWsh : this.wsh_ != null,
+ IsHta : this._hta != null,
+ IsMis : this._mis != null,
+ IsMsi : this._msi != null,
+ IsWsh : this._wsh != null,
 
  GetTimeString : function() {
   var dt = new Date();
-  return new String(100+dt.getHours()).substring(1) 
-   +":"+ new String(100+dt.getMinutes()).substring(1) 
-   +":"+ new String(100+dt.getSeconds()).substring(1);
+  return String(100+dt.getHours()).substring(1) 
+   +":"+ String(100+dt.getMinutes()).substring(1) 
+   +":"+ String(100+dt.getSeconds()).substring(1);
  },
 
  Debug : function(txt) {
   var rec, msiMessageTypeInfo = 0x04000000;
   if (this.IsHta) {
-   this.hta_.alert("Debug "+ ": "+ txt);
+   this._hta.alert("Debug "+ ": "+ txt);
   } else if (this.IsWsh) {
-   this.wsh_.Echo("Debug "+ this.GetTimeString() +": "+ txt);
+   this._wsh.Echo("Debug "+ this.GetTimeString() +": "+ txt);
   } else if (this.IsMis) {
-   rec = this.msi_.CreateRecord( 1 );
+   rec = this._msi.CreateRecord( 1 );
    rec.StringData(0) = "Debug [Time]: [1]";
    rec.StringData(1) = txt;
-   this.mis_.Message(msiMessageTypeInfo, rec);
+   this._mis.Message(msiMessageTypeInfo, rec);
    rec = null;
   }
  },
 
  GetOrNewInstaller : function() {
-  if (this.msi_ == null) {
-   this.msi_ = new ActiveXObject("WindowsInstaller.Installer");
+  if (this._msi == null) {
+   this._msi = new ActiveXObject("WindowsInstaller.Installer");
   }
-  return this.msi_
+  return this._msi
  },
     
  CurrentDirectory : function() {
@@ -361,7 +362,7 @@ var AkmeScriptingHost = {
 
  Environment : function(name) {
   if (this.IsMsi) {
-   return this.msi_.Environment(name);
+   return this._msi.Environment(name);
   } else {
    var sh = AkmeMS.wsh;
    return sh.Environment("PROCESS")(name);
