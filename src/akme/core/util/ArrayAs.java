@@ -1,6 +1,7 @@
 package akme.core.util;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +15,17 @@ import java.util.Objects;
 public class ArrayAs {
 
 	/**
-	 * Wrapper around Arrays.asList() just to pair with asMap() here.
-	 * 
+	 * Create a modifiable List to pair with asMap() here.
+	 * The result is independent of the given Array-args, unlike Arrays.asList().
+	 *
 	 * @param ary the Array to copy as a List
 	 * @return a modifiable List copied from the given Array
 	 */
 	@SafeVarargs
 	public static <E> List<E> list(E... ary) {
-		return Arrays.asList(ary);
+		List<E> result = new ArrayList<>();
+		Collections.addAll(result, ary);
+		return result;
 	}
 
 	/**
