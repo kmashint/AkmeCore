@@ -1,8 +1,9 @@
 // Test some other Microsoft functionality.
-// cscript //nologo AkmeMSTest.js
+// cscript //nologo AkmeSpVoice.js
 //
 var voc = WScript.CreateObject("SAPI.SpVoice");
-var msg = "Attention!  This is a test of the emergency broadcasting system.  Would you like to play a game?";
+var msg = "Greetings Professor Faulken.  Shall we play a game?";
+// Faulken is better pronounced although it's spelled Falken.
 WScript.Echo(msg);
 voc.Speak(msg);
 (function callback(voc) { if (!voc.WaitUntilDone(100)) setTimeout(callback, 0); })(voc);
