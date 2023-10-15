@@ -16,18 +16,18 @@
 <style>
 body { }
 #body { }
-#inputDiv { float:left; }
-#outputDiv { float:right; clear:right; }
-#outputFrame { width: 480px; height: ;}
-#log { clear:both; }
+#inputDiv { float: left; }
+#outputDiv { float: right; clear: right; }
+#outputFrame { width: 480px; }
+#log { clear: both; }
 </style>
 </head>
 <body>
 <div id='body'>
 
 <p>Find a squid proxy, port 3128, on the local network.
-To cache larger files on disk, set maximum_object_size 512 MB ; 
-and cache_dir aufs [maxCacheSizeMB] 16 256 max-size=536870912 ; 
+To cache larger files on disk, set maximum_object_size 512 MB ;
+and cache_dir aufs [maxCacheSizeMB] 16 256 max-size=536870912 ;
 where max-size is in bytes (512 MB = 536870912 bytes).
 </p>
 <div id='inputDiv'>
@@ -56,7 +56,7 @@ where max-size is in bytes (512 MB = 536870912 bytes).
 //
 
 this.onload = function() {
-	Test.init(); 
+	Test.init();
 };
 
 var Test = (function(){
@@ -67,26 +67,26 @@ var Test = (function(){
 		TIMEOUT_MS = 2000;
 
 	var oldGetServerXmlHttpRequest = AkmeMS.GetServerXmlHttpRequest;
-	AkmeMS.GetServerXmlHttpRequest = function(){ 
+	AkmeMS.GetServerXmlHttpRequest = function(){
 		var xhr = oldGetServerXmlHttpRequest.apply(AkmeMS, arguments);
 		// http://msdn.microsoft.com/en-us/library/ms760403(v=vs.85).aspx
 		// oServerXMLHTTPRequest.setTimeouts(resolveTimeout, connectTimeout, sendTimeout, receiveTimeout)
 		xhr.setTimeouts(TIMEOUT_MS, TIMEOUT_MS, TIMEOUT_MS, TIMEOUT_MS);
 		return xhr;
 	}
-		
+
 	return {
 		ipconfig: ipconfig,
 		init: init,
 		find: find,
 		open: open
 	};
-	
+
 	function init() {
 		ipconfig();
 		ipproxy();
 	}
-	
+
 	function ipconfig() {
 		var outFile = AkmeMS.GetTempFilename(".txt");
 		log("ipconfig to "+ outFile +" ...");
@@ -108,12 +108,12 @@ var Test = (function(){
 		var subnetOnly = ipStr2Int(mask) ^ 0xffffffff;
 		form.elements["lastAddress"].value = subnetOnly;
 	}
-	
+
 	function getRegKey(key) {
 		try { return AkmeMS.wsh.RegRead(key); }
 		catch (er) { return null; }
 	}
-	
+
 	function ipproxy() {
 		var regParent = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\";
 		var inetSet = {
@@ -127,7 +127,7 @@ var Test = (function(){
 		for (var key in inetSet) log(key +": "+ inetSet[key]);
 	}
 
-	function find() { 
+	function find() {
 		log("");
 		var form = document.forms[0];
 		var ip = form.elements["ipAddress"].value;
@@ -142,7 +142,7 @@ var Test = (function(){
 		findRecursive(a,0);
 		return false;
 	}
-	
+
 	function findRecursive(a,k) {
 		if (k >= a.length) return;
 		var ip = a[k], xhr, tmo;
@@ -162,7 +162,7 @@ var Test = (function(){
 		};
 		try {
 			xhr.send();
-			tmo = setTimeout(function(ev){ 
+			tmo = setTimeout(function(ev){
 				if (!tmo) return;
 				//log("TIMEOUT FROM "+ ip);
 				xhr.abort();
@@ -187,7 +187,7 @@ var Test = (function(){
 	function readFileAndDelete(fileName, lineFn) {
 		var ins = AkmeMS.fso.OpenTextFile(fileName, AkmeMS.fsoRead, false);
 		var str = null;
-		try { 
+		try {
 			if (typeof lineFn == "function") for (var i=0; !ins.AtEndOfStream; i++) {
 				str = ins.ReadLine();
 				if (!lineFn(str, i+1)) break;
@@ -203,16 +203,16 @@ var Test = (function(){
 			if (AkmeMS.fso.FileExists(fileName)) AkmeMS.fso.DeleteFile(fileName);
 		}
 	}
-	
+
 	function ipStr2Int(ip) {
 		var ipa = ip.split('.');
 		return (Number(ipa[0])<<24)+(Number(ipa[1])<<16)+(Number(ipa[2])<<8)+Number(ipa[3]);
 	}
-	
+
 	function ipInt2Str(ip) {
 		return String(ip>>>24) +'.'+ String((ip>>>16)&0xff) +'.'+ String((ip>>>8)&0xff) +'.'+ String(ip&0xff);
 	}
-	
+
 	function log(text) {
 		var div = document.getElementById("log");
 		div.appendChild(document.createTextNode(text));

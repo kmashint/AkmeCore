@@ -16,10 +16,10 @@
 <style>
 body { }
 #body { }
-#inputDiv { float:left; }
-#outputDiv { float:right; clear:right; }
-#outputFrame { width: 480px; height: ;}
-#log { clear:both; }
+#inputDiv { float: left; }
+#outputDiv { float: right; clear: right; }
+#outputFrame { width: 480px; }
+#log { clear: both; }
 </style>
 </head>
 <body>
@@ -53,7 +53,7 @@ async in a loop of callbacks with Array.forEach.
 //
 
 this.onload = function() {
-	Test.ipconfig(); 
+	Test.ipconfig();
 	Test.list();
 };
 
@@ -67,7 +67,7 @@ var Test = (function(){
 		list: list,
 		open: open
 	};
-	
+
 	function ipconfig() {
 		var outFile = AkmeMS.GetTempFilename(".txt");
 		log("ipconfig to "+ outFile +" ...");
@@ -90,7 +90,7 @@ var Test = (function(){
 		form.elements["lastAddress"].value = subnetOnly;
 	}
 
-	function find() { 
+	function find() {
 		log("");
 		var form = document.forms[0];
 		var ip = form.elements["ipAddress"].value;
@@ -110,7 +110,7 @@ var Test = (function(){
 		this.list();
 		return false;
 	}
-	
+
 	function list() {
 		var form = document.forms[0];
 		var ip = form.elements["ipAddress"].value;
@@ -151,7 +151,7 @@ var Test = (function(){
 	function readFileAndDelete(fileName, lineFn) {
 		var ins = AkmeMS.fso.OpenTextFile(fileName, AkmeMS.fsoRead, false);
 		var str = null;
-		try { 
+		try {
 			if (typeof lineFn == "function") for (var i=0; !ins.AtEndOfStream; i++) {
 				str = ins.ReadLine();
 				if (!lineFn(str, i+1)) break;
@@ -167,16 +167,16 @@ var Test = (function(){
 			if (AkmeMS.fso.FileExists(fileName)) AkmeMS.fso.DeleteFile(fileName);
 		}
 	}
-	
+
 	function ipStr2Int(ip) {
 		var ipa = ip.split('.');
 		return (Number(ipa[0])<<24)+(Number(ipa[1])<<16)+(Number(ipa[2])<<8)+Number(ipa[3]);
 	}
-	
+
 	function ipInt2Str(ip) {
 		return String(ip>>>24) +'.'+ String((ip>>>16)&0xff) +'.'+ String((ip>>>8)&0xff) +'.'+ String(ip&0xff);
 	}
-	
+
 	function log(text) {
 		var div = document.getElementById("log");
 		div.appendChild(document.createTextNode(text));

@@ -16,10 +16,10 @@
 <style>
 body { }
 #body { }
-#inputDiv { float:left; }
-#outputDiv { float:right; clear:right; }
-#outputFrame { width: 480px; height: ;}
-#log { clear:both; }
+#inputDiv { float: left; }
+#outputDiv { float: right; clear: right; }
+#outputFrame { width: 480px; }
+#log { clear: both; }
 </style>
 </head>
 <body>
@@ -46,24 +46,24 @@ body { }
 //
 
 this.onload = function() {
-	Test.init(); 
+	Test.init();
 };
 
 var Test = (function(){
 	var slice = Array.prototype.slice;
-	
+
 	return {
 		init: init
 	};
-	
+
 	function init() {
-		for (var en = new Enumerator(AkmeMS.wmiInstancesOf("Win32_BaseService")); 
+		for (var en = new Enumerator(AkmeMS.wmiInstancesOf("Win32_BaseService"));
 				!en.atEnd(); en.moveNext()) {
 			var item = en.item();
 			log(item.Name, item.Description); // key=DeviceID
 		}
 	}
-	
+
 	function log() {
 		var div = document.getElementById("log");
 		div.appendChild(document.createTextNode(slice.call(arguments, 0).join(" ")));
