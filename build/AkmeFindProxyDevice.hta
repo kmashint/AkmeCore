@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Find Proxy Device</title>
-<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta http-equiv="Content-Script-Type" content="text/javascript"/>
 <!-- GetObject is not supported in JScript/HTA for IE=9 or higher, use IE=8 or vbs helper before js.
 	http://social.technet.microsoft.com/Forums/en-US/ITCG/thread/37246a26-6401-4d3f-87c7-77046e11b8af/
@@ -51,9 +51,8 @@ where max-size is in bytes (512 MB = 536870912 bytes).
 </div>
 
 </div>
-<script type="text/vbscript">Function AkmeGetObject(str) Set AkmeGetObject = GetObject(str) End Function</script>
 <script src="AkmeUtilMicrosoft.js"></script>
-<script>/*<![CDATA[*/
+<script>
 //
 
 this.onload = function() {
@@ -222,6 +221,6 @@ var Test = (function(){
 
 })();
 
-/*]]>*/</script>
+</script>
 </body>
 </html>

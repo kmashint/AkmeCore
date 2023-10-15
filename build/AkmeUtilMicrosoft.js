@@ -3,9 +3,6 @@
  * e.g. for Scripting.FileSystemObject, Scripting.Dictionary, WScript.Shell, WMI
  */
 
-//In HTA: <script type="text/vbscript">Function AkmeGetObject(str) Set AkmeGetObject = GetObject(str) End Function</script>
-if (typeof this.GetObject != "function") this.GetObject = function(str){ return AkmeGetObject(str); };
-
 var AkmeMS = {
  errPathNotFound : -2146828212,
  errFileNotFound : -2147024894,
@@ -69,14 +66,24 @@ var AkmeMS = {
  wmiFast : 0x30, // 0x10 : wbemFlagReturnImmeidately + 0x20 : wbemFlagForwardOnly
  wmiTimeout : -2147209215,
 
+ wbemRemoteShutdown : 23,
+ wbemAnonymous : 1,
+ wbemIdentify : 2,
+ wbemImpersonate : 3,
+ wbemDelegate : 4,
+ 
  fso : new ActiveXObject("Scripting.FileSystemObject"),
  hta : typeof document === 'object' && (
         (document.documentMode == 8 && navigator.userAgent.indexOf("MSIE 7.") != -1) ||
-        (document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? 
-	HTA : null,
+        (document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? HTA : null,
  sha : new ActiveXObject("Shell.Application"),
  wsh : new ActiveXObject("WScript.Shell"),
- wmi : GetObject("winmgmts:{impersonationLevel=impersonate}!//./root/cimv2"),
+ wmi : (function (wbemLoc) {
+   //wbemLoc.Security_.ImpersonationLevel = 3;  // Impersonate
+   return wbemLoc.ConnectServer(".", "root/cimv2");
+ }(new ActiveXObject("WbemScripting.SWbemLocator"))),
+ wmiInstancesOf : function(path) { return this.wmi.InstancesOf(path, this.wbemFast); },
+ wmiExecQuery : function(qry) { return this.wmi.ExecQuery(qry, this.wbemFast); },
  
  VB2JSArray : function (vbAry) {
   return new VBArray(vbAry).toArray();
@@ -108,7 +115,10 @@ var AkmeMS = {
  
  GetGroupWmi : function (domainName,groupName) {
   var comp = (domainName == ".") ? this.net.ComputerName : domainName;
-  var wmi = GetObject("winmgmts:{impersonationLevel=impersonate}!//" + comp + "/root/cimv2");
+  var wmi = (function (self, wbemLoc, comp) {
+   wbemLoc.Security_.ImpersonationLevel = self.wbemImpersonate;
+   return wbemLoc.ConnectServer(comp, "root/cimv2");
+  }(this, new ActiveXObject("WbemScripting.SWbemLocator"), comp));
   var result = wmi.Get("Win32_Group.Domain='"+ comp +"',Name='"+ groupName +"'");
   wmi = null;
   return result;
@@ -209,8 +219,11 @@ var AkmeMS = {
  },
  
  Win32Shutdown : function (computerName, flags) {
-  var wmr = GetObject("winmgmts:{impersonationLevel=impersonate,(RemoteShutdown)}!//" +
-   computerName + "/root/cimv2");
+  var wmr = (function (self, wbemLoc, computerName) {
+   wbemLoc.Security_.ImpersonationLevel = self.wbemImpersonate;
+   return wbemLoc.ConnectServer(computerName, "root/cimv2");
+  }(this, new ActiveXObject("WbemScripting.SWbemLocator"), computerName));
+  wmr.Security_.Privileges.Add(this.wbemRemoteShutdown);
   for (var en = new Enumerator(wmr.InstancesOf("Win32_OperatingSystem")); 
     !en.atEnd(); en.moveNext()) {
    if (flags == 1) {
