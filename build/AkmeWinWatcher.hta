@@ -50,6 +50,7 @@ this.onload = function() {
 };
 
 var Test = (function(){
+	var slice = Array.prototype.slice;
 	
 	return {
 		init: init
@@ -65,9 +66,7 @@ var Test = (function(){
 	
 	function log() {
 		var div = document.getElementById("log");
-		for (var i=0; i<arguments.length; i++) {
-			div.appendChild(document.createTextNode(arguments[i]));
-		}
+		div.appendChild(document.createTextNode(slice.call(arguments, 0).join(" ")));
 		div.appendChild(document.createElement("br"));
 	}
 
