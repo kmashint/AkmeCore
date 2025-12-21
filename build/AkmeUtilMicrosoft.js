@@ -16,92 +16,92 @@ var JSON = JSON || (function () {
 }());
 
 var AkmeMS = {
-  errPathNotFound : -2146828212,
-  errFileNotFound : -2147024894,
+  errPathNotFound: -2146828212,
+  errFileNotFound: -2147024894,
 
-  fsoRead : 1,
-  fsoWrite : 2,
-  fsoAppend : 8,
-  fsoAscii : false,
-  fsoUnicode : true,
+  fsoRead: 1,
+  fsoWrite: 2,
+  fsoAppend: 8,
+  fsoAscii: false,
+  fsoUnicode: true,
 
-  popOk : 0,
-  popOkCancel : 1,
-  popAbortRetyIgnore : 2,
-  popYesNoCancel : 3,
-  popYesNo : 4,
-  popRetryCancel : 5,
-  popStopIcon : 16,
-  popQuestionIcon : 32,
-  popExclamationIcon : 48,
-  popInformationIcon : 64,
+  popOk: 0,
+  popOkCancel: 1,
+  popAbortRetyIgnore: 2,
+  popYesNoCancel: 3,
+  popYesNo: 4,
+  popRetryCancel: 5,
+  popStopIcon: 16,
+  popQuestionIcon: 32,
+  popExclamationIcon: 48,
+  popInformationIcon: 64,
 
-  ssfBitBucket : 10, // The recycle bin.
-  ssfCommonAppData : 35,
-  ssfCommonDesktopDir : 25,
-  ssfCommonStartMenu : 22,
-  ssfDesktop : 0, // The actual desktop, not the folder.
-  ssfDesktopDir : 16,
-  ssfLocalAppData : 28,
-  ssfInternetCache : 32,
-  ssfProfile : 40,
-  ssfPrograms : 2, // The user Start Menu Programs.
-  ssfProgramFiles : 38,
-  ssfProgramFilesX86 : 48,
-  ssfRoamingAppData : 26, // User roaming app data.
-  ssfSystem : 37,
-  ssfSystemX86 : 41,
-  ssfWindows : 36,
-  ssfTemp : -2, // Use non-standard number for TEMP directory.
+  ssfBitBucket: 10, // The recycle bin.
+  ssfCommonAppData: 35,
+  ssfCommonDesktopDir: 25,
+  ssfCommonStartMenu: 22,
+  ssfDesktop: 0, // The actual desktop, not the folder.
+  ssfDesktopDir: 16,
+  ssfLocalAppData: 28,
+  ssfInternetCache: 32,
+  ssfProfile: 40,
+  ssfPrograms: 2, // The user Start Menu Programs.
+  ssfProgramFiles: 38,
+  ssfProgramFilesX86: 48,
+  ssfRoamingAppData: 26, // User roaming app data.
+  ssfSystem: 37,
+  ssfSystemX86: 41,
+  ssfWindows: 36,
+  ssfTemp: -2, // Use non-standard number for TEMP directory.
 
-  winHide : 0,
-  winShow : 1,
-  winMin : 2,
-  winMax : 3,
-  winInactive : 4,
-  winActive : 5,
-  winMinNext : 6,
-  winMinInactive : 7,
-  winMaxInactive : 8,
-  winShowRestore : 9,
-  winInherit : 10,
+  winHide: 0,
+  winShow: 1,
+  winMin: 2,
+  winMax: 3,
+  winInactive: 4,
+  winActive: 5,
+  winMinNext: 6,
+  winMinInactive: 7,
+  winMaxInactive: 8,
+  winShowRestore: 9,
+  winInherit: 10,
 
-  winVer : null,
+  winVer: null,
 
-  wmiLogOff : 0,
-  wmiShutdown : 1,
-  wmiReboot : 2,
-  wmiForced : 4, // add this with one of the other flags, e.g. 0+4
-  wmiPowerOff : 8,
+  wmiLogOff: 0,
+  wmiShutdown: 1,
+  wmiReboot: 2,
+  wmiForced: 4, // add this with one of the other flags, e.g. 0+4
+  wmiPowerOff: 8,
 
   // wmi.InstancesOf("...", this.wmiFast) or wmi.ExecQuery("SELECT * FROM ...", "WQL", this.wmiFast)
-  wmiFast : 0x30, // 0x10 : wbemFlagReturnImmeidately + 0x20 : wbemFlagForwardOnly
-  wmiTimeout : -2147209215,
+  wmiFast: 0x30, // 0x10: wbemFlagReturnImmeidately + 0x20: wbemFlagForwardOnly
+  wmiTimeout: -2147209215,
 
-  wbemRemoteShutdown : 23,
-  wbemAnonymous : 1,
-  wbemIdentify : 2,
-  wbemImpersonate : 3,
-  wbemDelegate : 4,
+  wbemRemoteShutdown: 23,
+  wbemAnonymous: 1,
+  wbemIdentify: 2,
+  wbemImpersonate: 3,
+  wbemDelegate: 4,
 
-  fso : new ActiveXObject("Scripting.FileSystemObject"),
-  hta : typeof document === 'object' && (
+  fso: new ActiveXObject("Scripting.FileSystemObject"),
+  hta: typeof document === 'object' && (
       (document.documentMode == 8 && navigator.userAgent.indexOf("MSIE 7.") != -1) ||
-      (document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? HTA : null,
-  sha : new ActiveXObject("Shell.Application"),
-  wsh : new ActiveXObject("WScript.Shell"),
-  wmi : (function (wbemLoc) {
+      (document.documentMode > 8 && navigator.userAgent.indexOf("MSIE 7.") == -1 && typeof HTA.windowState != "undefined") ) ? HTA: null,
+  sha: new ActiveXObject("Shell.Application"),
+  wsh: new ActiveXObject("WScript.Shell"),
+  wmi: (function (wbemLoc) {
       //wbemLoc.Security_.ImpersonationLevel = 3;  // Impersonate
       return wbemLoc.ConnectServer(".", "root/cimv2");
       }(new ActiveXObject("WbemScripting.SWbemLocator"))),
-  wmiInstancesOf : function(path) { return this.wmi.InstancesOf(path, this.wbemFast); },
-  wmiExecQuery : function(qry) { return this.wmi.ExecQuery(qry, this.wbemFast); },
+  wmiInstancesOf: function(path) { return this.wmi.InstancesOf(path, this.wbemFast); },
+  wmiExecQuery: function(qry) { return this.wmi.ExecQuery(qry, this.wbemFast); },
 
-  VB2JSArray : function (vbAry) {
+  VB2JSArray: function (vbAry) {
     return new VBArray(vbAry).toArray();
   },
 
-  JS2VBArray : function (jsAry) {
+  JS2VBArray: function (jsAry) {
     var map = new ActiveXObject("Scripting.Dictionary");
     for (var i=0; i<jsAry.length; i++) map.add(i, jsAry[i]);
     var result = map.Items();
@@ -109,24 +109,24 @@ var AkmeMS = {
     return result;
   },
 
-  IsVistaOrHigher : function () {
+  IsVistaOrHigher: function () {
     if (this.winVer == null) this.winVer = wsh.RegRead("HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\CurrentVersion");
     return (this.winVer >= 6.0);
   },
 
-  IsElevated : function () { // S-1-5-19 is Local Service, a check for Admin/Elevation
+  IsElevated: function () { // S-1-5-19 is Local Service, a check for Admin/Elevation
     if (this.winElevated == null) try { wsh.RegRead("HKSUSERS\\S-1-5-19\\"); this.winElevated = true; } catch (er) { this.winElevated = false; }
     return this.winElevated;
   },
 
-  IsCurrentUserAdmin : function () {
+  IsCurrentUserAdmin: function () {
     // Only Administrators CanStartStopService("Schedule").
     // Vista requires special handling since no session has Administrative elevated rights by default.
     return this.IsVistaOrHigher() || this.sha.CanStartStopService("Schedule");
   },
 
-  GetGroupWmi : function (domainName,groupName) {
-    var comp = (domainName == ".") ? this.net.ComputerName : domainName;
+  GetGroupWmi: function (domainName,groupName) {
+    var comp = (domainName == ".") ? this.net.ComputerName: domainName;
     var wmi = (function (self, wbemLoc, comp) {
       wbemLoc.Security_.ImpersonationLevel = self.wbemImpersonate;
       return wbemLoc.ConnectServer(comp, "root/cimv2");
@@ -136,7 +136,7 @@ var AkmeMS = {
     return result;
   },
 
-  IsCurrentUserInGroupWmi : function (group) {
+  IsCurrentUserInGroupWmi: function (group) {
     if (!group) return false;
     var user = this.net.UserName;
     //alert( group.Path_ )
@@ -151,15 +151,15 @@ var AkmeMS = {
     return false;
   },
 
-  GetTempFilename : function (ext) {
-    return this.GetSpecialFolder(this.ssfTemp).Path +'\\'+ this.fso.GetTempName() + ((ext) ? ext : "");
+  GetTempFilename: function (ext) {
+    return this.GetSpecialFolder(this.ssfTemp).Path +'\\'+ this.fso.GetTempName() + ((ext) ? ext: "");
   },
 
-  GetFolderPath : function (name) {
+  GetFolderPath: function (name) {
     return this.fso.GetFolder(name).Path;
   },
 
-  GetSpecialFolder : function (nameOrId) {
+  GetSpecialFolder: function (nameOrId) {
     if (parseInt(nameOrId) === nameOrId) {
       // fso.GetSpecialFolder(#) // # 0=Windows, 1=System, 2=Temp
       if (nameOrId === this.ssfTemp) return this.fso.GetSpecialFolder(2);
@@ -167,19 +167,19 @@ var AkmeMS = {
     }
   },
 
-  GetXmlHttpRequest : function () {
+  GetXmlHttpRequest: function () {
     return new ActiveXObject("Msxml2.XMLHTTP.6.0");
   },
 
-  GetServerXmlHttpRequest : function () {
+  GetServerXmlHttpRequest: function () {
     return new ActiveXObject("Msxml2.ServerXMLHTTP.6.0");
   },
 
-  DoEvents : function () {
+  DoEvents: function () {
     return this.wsh.Run('subst.exe >nul:', 0, true);
   },
 
-  Sleep : function (millis) {
+  Sleep: function (millis) {
     // __InstanceCreationEvent, __InstanceModificationEvent, __InstanceDeletionEvent
     // __InstanceOperationEvent, __MethodInvocationEvent, __Event, __TimerEvent
     // Wait for an impossible WMI event with a timeout.
@@ -188,11 +188,11 @@ var AkmeMS = {
     catch (er) { if (er.number != this.wmiTimeout) throw er; }
   },
 
-  ShellExecute : function (executableName, vArgs, vDir, vOperation, vShow) {
+  ShellExecute: function (executableName, vArgs, vDir, vOperation, vShow) {
     this.sha.ShellExecute(executableName, vArgs, vDir, vOperation, vShow);
   },
 
-  CreateProcess : function (cmd, startPath, winStyle, priority, title, width, height) {
+  CreateProcess: function (cmd, startPath, winStyle, priority, title, width, height) {
     var startup = this.wmi.Get("Win32_ProcessStartup");
     var config = startup.SpawnInstance_();
     if (typeof winStyle != "undefined") config.ShowWindow = winStyle;
@@ -210,7 +210,7 @@ var AkmeMS = {
     return [err, pid];
   },
 
-  DestroyProcess : function (pid) {
+  DestroyProcess: function (pid) {
     var coll = this.wmi.InstancesOf("Win32_Process", this.wmiFast);
     for (var en=new Enumerator(coll); !en.atEnd(); en.moveNext()) {
       var item = en.item();
@@ -222,15 +222,15 @@ var AkmeMS = {
     }
   },
 
-  Reboot : function () {
+  Reboot: function () {
     this.Win32Shutdown(this.wmiReboot);
   },
 
-  Shutdown : function () {
+  Shutdown: function () {
     this.Win32Shutdown(this.wmiShutdown);
   },
 
-  Win32Shutdown : function (computerName, flags) {
+  Win32Shutdown: function (computerName, flags) {
     var wmr = (function (self, wbemLoc, computerName) {
       wbemLoc.Security_.ImpersonationLevel = self.wbemImpersonate;
       return wbemLoc.ConnectServer(computerName, "root/cimv2");
@@ -248,11 +248,11 @@ var AkmeMS = {
     }
   },
 
-  Popup : function (sText,nSecondsToWait,sTitle,nType) {
+  Popup: function (sText,nSecondsToWait,sTitle,nType) {
     this.wsh.Popup(sText,nSecondsToWait,sTitle,nType);
   },
 
-  Debug : function (str) {
+  Debug: function (str) {
     if (typeof(window)!="undefined") {
       var form = window.document.forms['debug'];
       if (form && form.elements['log']) form.elements['log'].value += str +"\r\n";
@@ -261,7 +261,7 @@ var AkmeMS = {
   },
 
   // e.g. ("%ProgramFiles%\\AF TIMS 5\\Update\\curl.exe", "curl URL Transfer")
-  AddFirewallAuthorizeApplication : function (fileName, displayName) {
+  AddFirewallAuthorizeApplication: function (fileName, displayName) {
     var NET_FW_PROFILE_DOMAIN = 0;
     var NET_FW_PROFILE_STANDARD = 1;
     var NET_FW_SCOPE_ALL = 0;
@@ -299,12 +299,12 @@ function AkmeErr(ex) {
   this.prefix = "";
   this.suffix = "";
   this.set = function (ex) {
-    this.number = (ex) ? ex.number : 0;
-    this.description = (ex) ? String(ex.description).replace(/[\r\n]/g," ") : "";
+    this.number = (ex) ? ex.number: 0;
+    this.description = (ex) ? String(ex.description).replace(/[\r\n]/g," "): "";
   };
   this.set(ex);
   this.format = function (prefix,suffix) {
-    return (prefix ? prefix : this.prefix) +" ("+ this.number +") "+ this.description +" "+ (suffix ? suffix : this.suffix);
+    return (prefix ? prefix: this.prefix) +" ("+ this.number +") "+ this.description +" "+ (suffix ? suffix: this.suffix);
   };
   return this;
 }
@@ -312,12 +312,12 @@ function AkmeErr(ex) {
 
 // Abstraction for HTA, MSI, or WSH scripting containers.
 var AkmeScriptingHost = {
-  _hta : typeof(window) !== "undefined" ? window : null,
-  _mis : typeof(Session) !== "undefined" ? Session : null,
-  _msi : typeof(Installer) !== "undefined" ? Installer : null,
-  _wsh : typeof(WScript) !== "undefined" ? WScript : null,
+  _hta: typeof(window) !== "undefined" ? window: null,
+  _mis: typeof(Session) !== "undefined" ? Session: null,
+  _msi: typeof(Installer) !== "undefined" ? Installer: null,
+  _wsh: typeof(WScript) !== "undefined" ? WScript: null,
 
-  Init : function() {
+  Init: function() {
     this.Debug("DateTime "+ new Date());
     this.Debug("CDir "+ this.CurrentDirectory());
     this.Debug("OS "+ this.Environment("OS"));
@@ -343,19 +343,19 @@ var AkmeScriptingHost = {
     }
   },
 
-  IsHta : this._hta != null,
-  IsMis : this._mis != null,
-  IsMsi : this._msi != null,
-  IsWsh : this._wsh != null,
+  IsHta: this._hta != null,
+  IsMis: this._mis != null,
+  IsMsi: this._msi != null,
+  IsWsh: this._wsh != null,
 
-  GetTimeString : function() {
+  GetTimeString: function() {
     var dt = new Date();
     return String(100+dt.getHours()).substring(1)
         +":"+ String(100+dt.getMinutes()).substring(1)
         +":"+ String(100+dt.getSeconds()).substring(1);
   },
 
-  Debug : function(txt) {
+  Debug: function(txt) {
     var rec, msiMessageTypeInfo = 0x04000000;
     if (this.IsHta) {
       this._hta.alert("Debug "+ ": "+ txt);
@@ -370,18 +370,18 @@ var AkmeScriptingHost = {
     }
   },
 
-  GetOrNewInstaller : function() {
+  GetOrNewInstaller: function() {
     if (this._msi == null) {
       this._msi = new ActiveXObject("WindowsInstaller.Installer");
     }
     return this._msi;
   },
 
-  CurrentDirectory : function() {
+  CurrentDirectory: function() {
     return AkmeMS.fso.GetFolder(".").Path;
   },
 
-  Environment : function(name) {
+  Environment: function(name) {
     if (this.IsMsi) {
       return this._msi.Environment(name);
     } else {
@@ -574,7 +574,7 @@ function AkmeIniFile() {
     while (i < this.lnList_.length) {
       key = null;
       str = this.lnList_[i];
-      c = (str) ? str.charAt(0) : "";
+      c = (str) ? str.charAt(0): "";
       if (c === "[") {
         pos = str.lastIndexOf("]");
         sec = str.substring(1,pos);

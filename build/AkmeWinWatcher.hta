@@ -29,8 +29,12 @@ body { }
 </p>
 <div id='inputDiv'>
 <form name='testForm' onsubmit='return false;'>
-<br/><input type='button' name='findBtn' value='find more' onclick='Test.find()' />
-<input type='button' name='openBtn' value='open selected' onclick='Test.open()' />
+  <br/><input type='button' name='findBtn' value='find' />
+    <input type='button' name='startBtn' value='start' />
+    <input type='button' name='stopBtn' value='stop' />
+    <input type='button' name='clearBtn' value='clearLog' />
+  <br/>Status: <input type='text' name='serviceStatus' value='' readonly/>
+  <br/><select name='serviceSelect'></select>
 </form>
 </div>
 
@@ -46,28 +50,58 @@ body { }
 //
 
 this.onload = function() {
-	Test.init();
+  var elem = document.forms['testForm'].elements['findBtn'];
+  elem.addEventListener('click', Test.find);
+
+  elem = document.forms['testForm'].elements['clearBtn'];
+  elem.addEventListener('click', Test.clearLog);
+  
+  elem = document.forms['testForm'].elements['serviceSelect'];
+  elem.addEventListener('change', Test.selectService);
 };
 
 var Test = (function(){
 	var slice = Array.prototype.slice;
 
 	return {
-		init: init
+		find: find,
+    selectService: selectService,
+    clearLog: clearLog
 	};
 
-	function init() {
-		for (var en = new Enumerator(AkmeMS.wmiInstancesOf("Win32_BaseService"));
+	function find() {
+    var logDiv = document.getElementById('log');
+    logDiv.innerHTML = "";
+    var elem = document.forms['testForm'].elements['serviceSelect'];
+		for (var en = new Enumerator(AkmeMS.wmiInstancesOf('Win32_BaseService'));
 				!en.atEnd(); en.moveNext()) {
 			var item = en.item();
 			log(item.Name, item.Description); // key=DeviceID
+      var opt = new Option(item.Name, item.Name);
+      opt.setAttribute('title', item.Description);
+      opt.setAttribute('data-status', (item.Started ? 'Started' : '-') + ' ' + item.Status);
+      elem.appendChild(opt);
 		}
 	}
-
-	function log() {
-		var div = document.getElementById("log");
-		div.appendChild(document.createTextNode(slice.call(arguments, 0).join(" ")));
-		div.appendChild(document.createElement("br"));
+  
+  function selectService(evt) {
+    var elem = document.forms['testForm'].elements['serviceStatus'];
+    var evtSelected = evt.target.options[evt.target.selectedIndex];
+    elem.value = evtSelected.getAttribute('data-status');
+  }
+  
+  function clearLog() {
+    var div = document.getElementById('log');
+    var parent = div.parentNode;
+    parent.removeChild(div);
+    div = div.cloneNode(false);
+    parent.appendChild(div);
+  }
+  
+  function log() {
+		var div = document.getElementById('log');
+		div.appendChild(document.createTextNode(slice.call(arguments, 0).join(' ')));
+		div.appendChild(document.createElement('br'));
 	}
 
 })();
