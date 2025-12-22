@@ -194,9 +194,9 @@ var AkmeMS = {
     // __InstanceCreationEvent, __InstanceModificationEvent, __InstanceDeletionEvent
     // __InstanceOperationEvent, __MethodInvocationEvent, __Event, __TimerEvent
     // Wait for an impossible WMI event with a timeout.
-    var mon = this.wmi.ExecNotificationQuery("SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_ComputerSystem'");
-    try { mon.NextEvent(millis); } // var ev = ...
-    catch (er) { if (er.number != this.wmiTimeout) throw er; }
+    if (this._sleeper === null) this._sleeper = this.wmi.ExecNotificationQuery("SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_ComputerSystem'");
+    try { var evt = this._sleeper.NextEvent(millis); }
+    catch (ex) { if (ex.number != this.wmiTimeout) throw ex; }
   },
 
   ShellExecute: function (executableName, vArgs, vDir, vOperation, vShow) {
@@ -303,7 +303,9 @@ var AkmeMS = {
   }
 
 } // AkmeMS
-
+Object.defineProperties(AkmeMS, {
+  _sleeper: { writable: true, value: null }
+});
 
 // Remember the error number and description.
 function AkmeErr(ex) {
