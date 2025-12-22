@@ -30,11 +30,11 @@ body { }
 <div id='inputDiv'>
 <form name='testForm' onsubmit='return false;'>
   <br/><input type='button' name='findBtn' value='find' />
-    <input type='button' name='startBtn' value='start' />
+  <br/><select name='serviceSelect'></select>
+  <br/><input type='button' name='startBtn' value='start' />
     <input type='button' name='stopBtn' value='stop' />
     <input type='button' name='clearBtn' value='clearLog' />
   <br/>Status: <input type='text' name='serviceStatus' value='' readonly/>
-  <br/><select name='serviceSelect'></select>
 </form>
 </div>
 
@@ -50,7 +50,10 @@ body { }
 //
 
 this.onload = function() {
-  var elem = document.forms['testForm'].elements['findBtn'];
+  var elem = document.forms['testForm'].elements['serviceSelect'];
+  elem.addEventListener('change', Test.selectService);
+
+  elem = document.forms['testForm'].elements['findBtn'];
   elem.addEventListener('click', Test.find);
 
   elem = document.forms['testForm'].elements['startBtn'];
@@ -61,9 +64,6 @@ this.onload = function() {
 
   elem = document.forms['testForm'].elements['clearBtn'];
   elem.addEventListener('click', Test.clearLog);
-
-  elem = document.forms['testForm'].elements['serviceSelect'];
-  elem.addEventListener('change', Test.selectService);
 };
 
 var Test = (function() {
@@ -81,6 +81,7 @@ var Test = (function() {
     clearLog();
     var logDiv = document.getElementById('log');
     var elem = document.forms['testForm'].elements['serviceSelect'];
+    elem.options.length = 0;
     // Win32_Service the typical services, Win32_BaseService includes deeper ones.
 		for (var en = new Enumerator(AkmeMS.wmiInstancesOf('Win32_Service'));
 				!en.atEnd(); en.moveNext()) {
@@ -88,7 +89,7 @@ var Test = (function() {
 			log(item.Name, item.Description); // key=DeviceID
       var opt = new Option(item.Name, item.Name);
       opt.setAttribute('title', item.Description);
-      opt.setAttribute('data-status', (item.Started ? 'Started' : '-') + ' ' + item.Status);
+      opt.setAttribute('data-status', (item.Started ? 'Started' : 'Stopped') + ' ' + item.Status);
       elem.appendChild(opt);
 		}
 	}
@@ -103,18 +104,30 @@ var Test = (function() {
     var elem = document.forms['testForm'].elements['serviceSelect'];
     var statusElem = document.forms['testForm'].elements['serviceStatus'];
     var svcOpt = elem.options[elem.selectedIndex];
-    alert(svcOpt.value);
-    var svc = AkmeMS.wmiExecQuery('SELECT * FROM Win32_Service WHERE Name=\'' + svcOpt.value + '\'').item();
-    statusElem.value = svc.StartService();
+    var items = AkmeMS.wmi.ExecQuery('SELECT * FROM Win32_Service WHERE Name=\'' + svcOpt.value + '\'');
+    var svc = items.ItemIndex(0);  // new Enumerator(result).item();
+    var result = svc.StartService();
+    if (result == 0) {
+      statusElem.value = 'Started OK';
+      svcOpt.setAttribute('data-status', statusElem.value);
+    } else {
+      statusElem.value = result;
+    }
   }
 
   function stopService(evt) {
     var elem = document.forms['testForm'].elements['serviceSelect'];
     var statusElem = document.forms['testForm'].elements['serviceStatus'];
     var svcOpt = elem.options[elem.selectedIndex];
-    alert('SELECT * FROM Win32_Service WHERE Name=\'' + svcOpt.value + '\'');
-    var svc = AkmeMS.wmiExecQuery('SELECT * FROM Win32_Service WHERE Name=\'' + svcOpt.value + '\'').item();
-    statusElem.value = svc.StopService();
+    var items = AkmeMS.wmi.ExecQuery('SELECT * FROM Win32_Service WHERE Name=\'' + svcOpt.value + '\'');
+    var svc = items.ItemIndex(0);  // new Enumerator(result).item();
+    var result = svc.StopService();
+    if (result == 0) {
+      statusElem.value = 'Stopped OK';
+      svcOpt.setAttribute('data-status', statusElem.value);
+    } else {
+      statusElem.value = result;
+    }
   }
 
   function clearLog() {

@@ -6,7 +6,11 @@
  * https://stackoverflow.com/questions/5497967/jscript-version-availability-for-wsh-installations
  * https://web.archive.org/web/20110223213002/http://msdn.microsoft.com:80/en-us/library/yek4tbz0(v=vs.85).aspx
  * https://learn.microsoft.com/en-us/windows/win32/api/wbemdisp/ne-wbemdisp-wbemimpersonationlevelenum
- *
+ * Modern Windows has both the old JS-3 era C:/Windows/system32/jscript.dll,
+ * and the IE11 JS-5 era jscript9.dll (cscript //nologo //e:{16d51579-a30b-4c8b-a276-0ff4dc41e755}).
+ * WScript.StdIn.ReadLine()
+ * WScript.StdOut.WriteLine()
+ * WScript.Echo("Hello", "world!")
 */
 
 // Polyfill JSON if not available.
@@ -77,8 +81,11 @@ var AkmeMS = {
   wmiPowerOff: 8,
 
   // wmi.InstancesOf("...", this.wmiFast) or wmi.ExecQuery("SELECT * FROM ...", "WQL", this.wmiFast)
-  wmiFast: 0x30, // 0x10: wbemFlagReturnImmeidately + 0x20: wbemFlagForwardOnly
+  wmiFast: 0x30, // 0x10: wbemFlagReturnImmediately + 0x20: wbemFlagForwardOnly
   wmiTimeout: -2147209215,
+
+  wbemFlagReturnImmeidately: 0x10,
+  wbemFlagForwardOnly: 0x20,
 
   wbemRemoteShutdown: 23,
   wbemAnonymous: 1,
@@ -93,11 +100,13 @@ var AkmeMS = {
   sha: new ActiveXObject("Shell.Application"),
   wsh: new ActiveXObject("WScript.Shell"),
   wmi: (function (wbemLoc) {
-      //wbemLoc.Security_.ImpersonationLevel = 3;  // Impersonate
+      wbemLoc.Security_.ImpersonationLevel = 3;
       return wbemLoc.ConnectServer(".", "root/cimv2");
       }(new ActiveXObject("WbemScripting.SWbemLocator"))),
-  wmiInstancesOf: function(path) { return this.wmi.InstancesOf(path, this.wbemFast); },
-  wmiExecQuery: function(qry) { return this.wmi.ExecQuery(qry, this.wbemFast); },
+  // These are meant for fast read-only without method calls.
+  // To use WMI method calls, use AkmeMS.wmi.ExecQuery(qry).
+  wmiInstancesOf: function(path) { return this.wmi.InstancesOf(path, this.wmiFast); },
+  wmiExecQuery: function(qry) { return this.wmi.ExecQuery(qry, this.wmiFast); },
 
   VB2JSArray: function (vbAry) {
     return new VBArray(vbAry).toArray();
