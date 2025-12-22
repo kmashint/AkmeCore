@@ -5,6 +5,8 @@
  *   JSON, Object.defineProperty(), Object.getOwnPropertyDescriptor(), Promise
  * https://stackoverflow.com/questions/5497967/jscript-version-availability-for-wsh-installations
  * https://web.archive.org/web/20110223213002/http://msdn.microsoft.com:80/en-us/library/yek4tbz0(v=vs.85).aspx
+ * https://learn.microsoft.com/en-us/windows/win32/api/wbemdisp/ne-wbemdisp-wbemimpersonationlevelenum
+ *
 */
 
 // Polyfill JSON if not available.
