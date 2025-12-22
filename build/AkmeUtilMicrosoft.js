@@ -198,6 +198,7 @@ var AkmeMS = {
     try { var evt = this._sleeper.NextEvent(millis); }
     catch (ex) { if (ex.number != this.wmiTimeout) throw ex; }
   },
+  _sleeper: null,
 
   ShellExecute: function (executableName, vArgs, vDir, vOperation, vShow) {
     this.sha.ShellExecute(executableName, vArgs, vDir, vOperation, vShow);
@@ -303,9 +304,6 @@ var AkmeMS = {
   }
 
 } // AkmeMS
-Object.defineProperties(AkmeMS, {
-  _sleeper: { writable: true, value: null }
-});
 
 // Remember the error number and description.
 function AkmeErr(ex) {
